@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 from pathlib import Path
 
 
-class CKANDataDownloader:
+class DCATDownloader:
     def __init__(self, datajson_url, output_dir="output", max_threads=5):
         self.datajson_url = datajson_url
         self.output_dir = output_dir

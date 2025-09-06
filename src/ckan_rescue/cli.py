@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from .ckan_dcat import CKANDataDownloader
+from .dcat import DCATDownloader
 
 def main():
     parser = argparse.ArgumentParser(description='Download data from a CKAN portal implementing ckanext-datajson')
@@ -13,7 +13,7 @@ def main():
 
     args = parser.parse_args()
 
-    downloader = CKANDataDownloader(args.url, args.output, args.threads)
+    downloader = DCATDownloader(args.url, args.output, args.threads)
     success = downloader.run()
 
     sys.exit(0 if success else 1)
