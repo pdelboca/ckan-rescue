@@ -22,12 +22,6 @@ class DCATDownloader:
         self.download_queue = queue.Queue()
         self.failed_downloads = []
         self.lock = threading.Lock()
-        logging.basicConfig(
-            filename=self.logs_path,
-            level=logging.INFO,
-            filemode="w",
-            format="%(asctime)s - %(levelname)s - %(message)s",
-        )
 
     def _extract_file_from_url(download_url):
         """Extract file from URL."""
@@ -117,6 +111,14 @@ class DCATDownloader:
         print(f"Processing portal: {homepage}")
 
         base_path = self.create_directory_structure(homepage)
+
+        # basicConfig requires directory structure created.
+        logging.basicConfig(
+            filename=self.logs_path,
+            level=logging.INFO,
+            filemode="w",
+            format="%(asctime)s - %(levelname)s - %(message)s",
+        )
 
         self.prepare_download_tasks(data, base_path)
 
