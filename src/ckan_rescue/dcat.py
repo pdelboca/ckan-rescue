@@ -17,6 +17,14 @@ class DCATDownloader:
         self.failed_downloads = []
         self.lock = threading.Lock()
 
+    def _extract_file_from_url(download_url):
+        """Extract file from URL."""
+        parsed_url = urlparse(download_url)
+        filename = os.path.basename(parsed_url.path)
+        if not filename or filename == parsed_url.path:
+            return ""
+        return filename
+
     def fetch_datajson(self):
         """Download and parse the data.json file"""
         try:
@@ -36,34 +44,29 @@ class DCATDownloader:
 
     def prepare_download_tasks(self, data, base_path):
         """Prepare all download tasks from the data.json"""
-        # Save the data.json file
         datajson_path = base_path / "data.json"
         with open(datajson_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-        # Prepare download tasks for each distribution
         for dataset in data.get('dataset', []):
             dataset_id = dataset.get('identifier', 'unknown_dataset')
             for distribution in dataset.get('distribution', []):
                 download_url = distribution.get('downloadURL')
                 if download_url:
-                    # Create the directory structure for this distribution
                     dist_id = distribution.get('identifier', 'unknown_distribution')
+
+                    filename = distribution.get('fileName')
+                    if not filename:
+                        filename = self._extract_file_from_url(download_url)
+                    if not filename:
+                        filename = f"dist_{dist_id}"
+
+                    # Create the directory structure for this distribution
                     dist_dir = base_path / "data" / dataset_id / dist_id
                     dist_dir.mkdir(parents=True, exist_ok=True)
 
-                    # Get filename from distribution or extract from URL
-                    filename = distribution.get('fileName')
-                    if not filename:
-                        # Extract filename from URL
-                        parsed_url = urlparse(download_url)
-                        filename = os.path.basename(parsed_url.path)
-                        if not filename or filename == parsed_url.path:
-                            filename = f"file_{dist_id}"
-
                     file_path = dist_dir / filename
 
-                    # Add to download queue
                     self.download_queue.put((download_url, str(file_path), dist_id))
 
     def download_worker(self):
