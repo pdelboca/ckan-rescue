@@ -101,12 +101,6 @@ output/
                 └── budget_2023.xlsx
 ```
 
-### Log Files
-
-- **Success**: `logs.txt` will contain "All downloads completed successfully."
-- **Failures**: `logs.txt` will list all failed downloads with error details
-- **Console Output**: Real-time progress and status updates
-
 ## How to Develop
 
 This project uses [uv](https://docs.astral.sh/uv/) for dependency management and development.
