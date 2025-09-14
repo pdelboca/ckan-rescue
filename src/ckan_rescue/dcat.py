@@ -1,13 +1,12 @@
 import json
 import logging
 import os
-import urllib.request
-import urllib.error
-import threading
 import queue
-from urllib.parse import urlparse
+import threading
+import urllib.error
+import urllib.request
 from pathlib import Path
-
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +14,9 @@ logger = logging.getLogger(__name__)
 class DCATDownloader:
     def __init__(self, datajson_url, output_dir="output", max_threads=5):
         self.datajson_url = datajson_url
+        self.url = urlparse(datajson_url).netloc
         self.output_dir = output_dir
-        self.base_path = Path(self.output_dir) / urlparse(datajson_url).netloc
+        self.base_path = Path(self.output_dir) / self.url
         self.logs_path = self.base_path / "logs.txt"
         self.max_threads = max_threads
         self.download_queue = queue.Queue()
@@ -41,12 +41,10 @@ class DCATDownloader:
             logger.error(f"Error fetching data.json: {e}")
             return None
 
-    def create_directory_structure(self, homepage):
+    def create_directory_structure(self):
         """Create the required directory structure"""
-        base_path = Path(self.output_dir) / homepage
-        base_path.mkdir(parents=True, exist_ok=True)
-        (base_path / "data").mkdir(exist_ok=True)
-        return base_path
+        self.base_path.mkdir(parents=True, exist_ok=True)
+        (self.base_path / "data").mkdir(exist_ok=True)
 
     def prepare_download_tasks(self, data, base_path):
         """Prepare all download tasks from the data.json"""
@@ -107,10 +105,9 @@ class DCATDownloader:
         if not data:
             return False
 
-        homepage = data.get("homepage", "unknown_portal")
-        print(f"Processing portal: {homepage}")
+        print(f"Processing portal: {self.url}")
 
-        base_path = self.create_directory_structure(homepage)
+        self.create_directory_structure()
 
         # basicConfig requires directory structure created.
         logging.basicConfig(
@@ -120,7 +117,7 @@ class DCATDownloader:
             format="%(asctime)s - %(levelname)s - %(message)s",
         )
 
-        self.prepare_download_tasks(data, base_path)
+        self.prepare_download_tasks(data, self.base_path)
 
         total_files = self.download_queue.qsize()
         print(f"Found {total_files} files to download")
