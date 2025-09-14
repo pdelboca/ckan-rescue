@@ -21,3 +21,9 @@ Issues = "https://github.com/pdelboca/ckan-rescue/issues"
 
 [project.scripts]
 ckan-dcat-download = "ckan_rescue.cli:main"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["I"]
