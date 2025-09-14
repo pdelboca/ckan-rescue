@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "ckan_rescue"
-version = "0.0.3"
+version = "0.0.4"
 description = "A tool to rescue (download) data from CKAN portals."
 readme = "README.md"
 requires-python = ">=3.10"
