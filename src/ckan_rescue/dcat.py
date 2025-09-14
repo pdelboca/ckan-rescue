@@ -67,6 +67,10 @@ class DCATDownloader:
 
                     file_path = dist_dir / filename
 
+                    if file_path.exists():
+                        print(f"{file_path} already exists. Skipping download.")
+                        continue
+
                     self.download_queue.put((download_url, str(file_path), dist_id))
 
     def download_worker(self):
