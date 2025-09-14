@@ -158,11 +158,12 @@ uv version  --bump [patch|minor|major]
 uv build
 ```
 
-3. **Create tag and commit files.**
+3. **Create tag and commit files**:
 ```bash
 git add pyproject.toml uv.lock  # Edited by uv version --bump
 git commit -a -m "bump: Release v<NEW_VERSION>"
 git tag "v<NEW_VERSION>"
+git push --tags
 ```
 
 4. **Publish to PyPI**:
@@ -173,6 +174,9 @@ uv publish --token <YOUR_PYPI_TOKEN>
 # Or publish to TestPyPI first (recommended)
 uv publish --index-url https://test.pypi.org/simple/
 ```
+
+5. **Create Github Release**:
+Create a Github Release to document the new version.
 
 ## Issues
 
