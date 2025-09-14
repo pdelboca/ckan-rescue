@@ -146,17 +146,6 @@ ckan-dcat-download --help
 
 This project uses uv for [building and publishing to PyPI](https://docs.astral.sh/uv/guides/package/).
 
-### Prerequisites
-
-1. Ensure you have PyPI credentials configured:
-```bash
-# Set the environment variable
-export UV_PUBLISH_TOKEN=__token__
-
-# or add it to the command directly
-uv publish --token __token__
-```
-
 ### Publishing Steps
 
 1. **Update version**: Update the version of the project:
@@ -169,10 +158,17 @@ uv version  --bump [patch|minor|major]
 uv build
 ```
 
-3. **Publish to PyPI**:
+3. **Create tag and commit files.**
+```bash
+git add pyproject.toml uv.lock  # Edited by uv version --bump
+git commit -a -m "bump: Release v<NEW_VERSION>"
+git tag "v<NEW_VERSION>"
+```
+
+4. **Publish to PyPI**:
 ```bash
 # Publish to PyPI
-uv publish
+uv publish --token <YOUR_PYPI_TOKEN>
 
 # Or publish to TestPyPI first (recommended)
 uv publish --index-url https://test.pypi.org/simple/
