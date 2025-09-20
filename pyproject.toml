@@ -8,7 +8,9 @@ version = "0.0.4"
 description = "A tool to rescue (download) data from CKAN portals."
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "click>=8.3.0",
+]
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [
@@ -20,7 +22,7 @@ Homepage = "https://github.com/pdelboca/ckan-rescue"
 Issues = "https://github.com/pdelboca/ckan-rescue/issues"
 
 [project.scripts]
-ckan-dcat-download = "ckan_rescue.cli:main"
+ckan-rescue = "ckan_rescue.cli:main"
 
 [tool.ruff]
 line-length = 120
