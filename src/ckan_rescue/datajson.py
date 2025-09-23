@@ -34,10 +34,15 @@ class DataJsonDownloader:
         try:
             with urllib.request.urlopen(self.datajson_url) as response:
                 data = json.loads(response.read().decode())
-                return data
         except Exception as e:
             logger.error(f"Error fetching data.json: {e}")
             return None
+
+        datajson_path = self.base_path / "data.json"
+        with open(datajson_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        return data
 
     def create_directory_structure(self):
         """Create the required directory structure"""
@@ -46,10 +51,6 @@ class DataJsonDownloader:
 
     def prepare_download_tasks(self, data, base_path):
         """Prepare all download tasks from the data.json"""
-        datajson_path = base_path / "data.json"
-        with open(datajson_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-
         for dataset in data.get("dataset", []):
             dataset_id = dataset.get("identifier", "unknown_dataset")
             for distribution in dataset.get("distribution", []):
