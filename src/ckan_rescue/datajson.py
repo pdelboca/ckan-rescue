@@ -3,7 +3,6 @@ import logging
 import os
 import queue
 import threading
-import urllib.error
 import urllib.request
 from pathlib import Path
 from urllib.parse import urlparse
@@ -11,7 +10,7 @@ from urllib.parse import urlparse
 logger = logging.getLogger(__name__)
 
 
-class DCATDownloader:
+class DataJsonDownloader:
     def __init__(self, datajson_url, output_dir="output", max_threads=5):
         self.datajson_url = datajson_url
         self.url = urlparse(datajson_url).netloc
@@ -23,7 +22,7 @@ class DCATDownloader:
         self.failed_downloads = []
         self.lock = threading.Lock()
 
-    def _extract_file_from_url(download_url):
+    def _extract_file_from_url(self, download_url):
         """Extract file from URL."""
         parsed_url = urlparse(download_url)
         filename = os.path.basename(parsed_url.path)
@@ -81,7 +80,7 @@ class DCATDownloader:
         """Worker thread function to process download tasks"""
         while True:
             try:
-                url, file_path, dist_id = self.download_queue.get(timeout=10)
+                url, file_path, _ = self.download_queue.get(timeout=10)
                 try:
                     # Download the file
                     with urllib.request.urlopen(url) as response:
@@ -128,7 +127,7 @@ class DCATDownloader:
 
         print(f"Download in progress. See {self.logs_path} for details.")
         threads = []
-        for i in range(self.max_threads):
+        for _ in range(self.max_threads):
             thread = threading.Thread(target=self.download_worker)
             thread.daemon = True
             thread.start()
@@ -138,7 +137,7 @@ class DCATDownloader:
         self.download_queue.join()
 
         if self.failed_downloads:
-            print(f"{len(self.failed_downloads)} downloads failed. See {self.log_file} for details.")
+            print(f"{len(self.failed_downloads)} downloads failed. See {self.logs_path} for details.")
         else:
             print("All downloads completed successfully.")
 

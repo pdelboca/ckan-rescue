@@ -32,20 +32,7 @@ uv add ckan-rescue
 ### Basic Usage
 
 ```bash
-ckan-dcat-download <data.json_url>
-```
-
-### Advanced Usage
-
-```bash
-# Specify output directory
-ckan-dcat-download https://example.com/data.json -o /path/to/output
-
-# Use more threads for faster downloads
-ckan-dcat-download https://example.com/data.json -t 10
-
-# Combine options
-ckan-dcat-download https://example.com/data.json -o downloads -t 8
+ckan-rescue <https://data.example.org/data.json> datajson-download
 ```
 
 ### Command Line Options
@@ -55,18 +42,6 @@ ckan-dcat-download https://example.com/data.json -o downloads -t 8
 - `-t, --threads`: Number of threads for parallel downloads (default: 5)
 - `-v, --version`: Show version information
 - `-h, --help`: Show help message
-
-### Examples
-
-Download from a government data portal:
-```bash
-ckan-dcat-download https://data.gov/data.json
-```
-
-Download to a specific directory with 10 parallel threads:
-```bash
-ckan-dcat-download https://opendata.city.gov/data.json -o city_data -t 10
-```
 
 ## Output Structure
 
