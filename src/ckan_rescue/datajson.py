@@ -11,11 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 class DataJsonDownloader:
-    def __init__(self, datajson_url, output_dir="output", max_threads=5):
+    def __init__(self, datajson_url, max_threads=5):
         self.datajson_url = datajson_url
         self.url = urlparse(datajson_url).netloc
-        self.output_dir = output_dir
-        self.base_path = Path(self.output_dir) / self.url
+        self.base_path = Path("output") / self.url
         self.logs_path = self.base_path / "logs.txt"
         self.max_threads = max_threads
         self.download_queue = queue.Queue()

@@ -38,7 +38,6 @@ ckan-rescue <https://data.example.org/data.json> datajson-download
 ### Command Line Options
 
 - `url` (required): URL of the data.json file from the CKAN portal
-- `-o, --output`: Output directory (default: `output`)
 - `-t, --threads`: Number of threads for parallel downloads (default: 5)
 - `-v, --version`: Show version information
 - `-h, --help`: Show help message
