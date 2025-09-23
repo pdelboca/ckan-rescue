@@ -99,14 +99,14 @@ class DataJsonDownloader:
 
     def run(self):
         """Main method to execute the download process"""
+        print("Creating directory structure...")
+        self.create_directory_structure()
         print(f"Fetching data.json from {self.datajson_url}")
         data = self.fetch_datajson()
         if not data:
             return False
 
         print(f"Processing portal: {self.url}")
-
-        self.create_directory_structure()
 
         # basicConfig requires directory structure created.
         logging.basicConfig(
