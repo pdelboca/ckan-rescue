@@ -147,8 +147,7 @@ class DCATDownloader:
 
         print(f"Download in progress. See {self.logs_path} for details.")
         threads = []
-        # for _ in range(self.max_threads):
-        for _ in range(1):
+        for _ in range(self.max_threads):
             thread = threading.Thread(target=self.download_worker)
             thread.daemon = True
             thread.start()
