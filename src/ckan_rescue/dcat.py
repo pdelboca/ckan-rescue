@@ -1,5 +1,4 @@
 from rdflib import Graph, Namespace, RDF
-import rdflib
 from rdflib.util import guess_format
 
 import logging
