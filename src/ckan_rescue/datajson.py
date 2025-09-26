@@ -82,11 +82,10 @@ class DataJsonDownloader:
             try:
                 url, file_path, _ = self.download_queue.get(timeout=10)
                 try:
-                    # Download the file
+                    logger.info(f"Downloading: {file_path}")
                     with urllib.request.urlopen(url) as response:
                         with open(file_path, "wb") as out_file:
                             out_file.write(response.read())
-                    logger.info(f"Downloaded: {file_path}")
                 except Exception as e:
                     # Log failed download
                     with self.lock:
@@ -101,12 +100,6 @@ class DataJsonDownloader:
         """Main method to execute the download process"""
         print("Creating directory structure...")
         self.create_directory_structure()
-        print(f"Fetching data.json from {self.datajson_url}")
-        data = self.fetch_datajson()
-        if not data:
-            return False
-
-        print(f"Processing portal: {self.url}")
 
         # basicConfig requires directory structure created.
         logging.basicConfig(
@@ -115,6 +108,13 @@ class DataJsonDownloader:
             filemode="w",
             format="%(asctime)s - %(levelname)s - %(message)s",
         )
+
+        print(f"Fetching data.json from {self.datajson_url}")
+        data = self.fetch_datajson()
+        if not data:
+            return False
+
+        print(f"Processing portal: {self.url}")
 
         self.prepare_download_tasks(data, self.base_path)
 

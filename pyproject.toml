@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "click>=8.3.0",
+    "rdflib>=7.2.1",
 ]
 license = "MIT"
 license-files = ["LICENSE"]
@@ -29,3 +30,9 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["I"]
+
+[dependency-groups]
+dev = [
+    "ipdb>=0.13.13",
+    "ipython>=8.37.0",
+]
