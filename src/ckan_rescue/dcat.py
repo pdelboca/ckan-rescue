@@ -63,46 +63,39 @@ class DCATDownloader:
     def _get_download_url(self, distribution, data):
         """Returns an URL pointing to the actual file to download."""
         download_url = data.value(distribution, DCAT.downloadURL)
-        if download_url:
-            return download_url
-
-        # Some CKAN instances returns the downloadURL as accessURL. Others just a link to the resource page.
-        # We return it and double check when performing the download if it is an actual file
-        access_url = data.value(distribution, DCAT.accessURL)
-        return access_url
+        return download_url
 
     def prepare_download_tasks(self, data):
-        for dataset in list(data.subjects(RDF.type, DCAT.Dataset))[:5]:
+        for dataset in data.subjects(RDF.type, DCAT.Dataset):
             for distribution in data.objects(dataset, DCAT.distribution):
                 download_url = self._get_download_url(distribution, data)
                 dist_id = self._get_identifier(distribution)
 
-                if download_url:
-                    dataset_id = self._get_identifier(dataset)
-                    dist_filename = self._extract_file_from_url(download_url)
+                if not download_url:
+                    logger.warning(f"Distribution {distribution} does not have a download URL. Nothing will be downloaded.")
+                    continue
 
-                    # Create the directory structure for this distribution
-                    dist_dir = self.data_path / dataset_id / dist_id
-                    dist_dir.mkdir(parents=True, exist_ok=True)
+                dataset_id = self._get_identifier(dataset)
+                dist_filename = self._extract_file_from_url(download_url)
 
-                    file_path = dist_dir / dist_filename
-                    if file_path.exists():
-                        logger.info(f"Skipping download: {file_path} already exists.")
-                        continue
-                    self.download_queue.put((download_url, str(file_path), dist_id))
+                # Create the directory structure for this distribution
+                dist_dir = self.data_path / dataset_id / dist_id
+                dist_dir.mkdir(parents=True, exist_ok=True)
+
+                file_path = dist_dir / dist_filename
+                if file_path.exists():
+                    logger.info(f"Skipping download: {file_path} already exists.")
+                    continue
+                self.download_queue.put((download_url, str(file_path), dist_id))
 
     def download_worker(self):
         """Worker thread function to process download tasks"""
         while True:
             try:
-                url, file_path, dist_id = self.download_queue.get(timeout=10)
+                url, file_path, _ = self.download_queue.get(timeout=10)
                 try:
                     logger.info(f"Downloading: {file_path}")
                     with urllib.request.urlopen(url) as response:
-                        if response.info().get_content_type() == 'text/html':
-                            # Some CKAN instances provide the access URL as download URL, therefore we are not downloading
-                            # the file, but the HTML of the portal's resource/distribution.
-                            logger.warning(f"The Download URL of {dist_id} might not be a file..")
                         with open(file_path, "wb") as out_file:
                             out_file.write(response.read())
                     logger.info(f"Downloaded: {file_path}")
